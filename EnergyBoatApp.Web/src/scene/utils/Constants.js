@@ -31,7 +31,7 @@ export const CAMERA_INITIAL_TARGET = { x: 0, y: 0, z: 0 };
 
 // Boat status colors
 export const BOAT_COLORS = {
-  Active: 0xFF4500,      // Fugro orange-red
+  Active: 0xFF4500,      // Contoso-Sea orange-red
   Charging: 0xFFAA00,    // Yellow-orange
   Maintenance: 0x888888,  // Gray
   default: 0xFF4500,

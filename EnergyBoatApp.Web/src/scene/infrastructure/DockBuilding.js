@@ -173,7 +173,7 @@ export function createRoofAntenna(antennaMaterial) {
   // Main antenna pole
   const poleGeometry = new THREE.CylinderGeometry(0.03, 0.03, 1.5, 12);
   const pole = new THREE.Mesh(poleGeometry, antennaMaterial);
-  pole.position.set(-0.6, 4.9, 0);
+  pole.position.set(-0.6, 4.3, 0);
   antennaGroup.add(pole);
   
   // Antenna elements (crossbars)
@@ -200,14 +200,14 @@ export function createSatelliteDish(dishMaterial) {
   // Dish
   const dishGeometry = new THREE.SphereGeometry(0.4, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2);
   const dish = new THREE.Mesh(dishGeometry, dishMaterial);
-  dish.rotation.x = -Math.PI / 3;
-  dish.position.set(0.6, 4.3, 0);
+  dish.rotation.x = Math.PI / 3;  // Inverted - now faces opposite direction
+  dish.position.set(0.6, 3.8, 0);
   dishGroup.add(dish);
   
   // Dish mount
-  const mountGeometry = new THREE.CylinderGeometry(0.05, 0.05, 0.3, 12);
+  const mountGeometry = new THREE.CylinderGeometry(0.05, 0.05, 0.8, 12);
   const mount = new THREE.Mesh(mountGeometry, dishMaterial);
-  mount.position.set(0.6, 4.15, 0);
+  mount.position.set(0.6, 3.6, 0);
   dishGroup.add(mount);
   
   return dishGroup;

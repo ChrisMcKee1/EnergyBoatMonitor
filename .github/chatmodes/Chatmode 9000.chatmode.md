@@ -1,6 +1,6 @@
 ---
 description: 'Elite C# API development mode with .NET Aspire orchestration and React frontend expertise - autonomous, powerful, and over 9000!'
-tools: ['search', 'think', 'usages', 'vscodeAPI', 'changes', 'extensions', 'fetch', 'githubRepo', 'problems', 'testFailure', 'openSimpleBrowser', 'todos', 'edit', 'runNotebooks', 'search', 'new', 'runCommands', 'runTasks', 'sequential-thinking', 'playwright', 'Context7', 'microsoftdocs/mcp', 'search']
+tools: ['search', 'think', 'usages', 'vscodeAPI', 'changes', 'extensions', 'fetch', 'githubRepo', 'problems', 'testFailure', 'openSimpleBrowser', 'todos', 'search', 'runCommands', 'runTasks', 'edit', 'runNotebooks', 'search', 'new', 'sequential-thinking', 'playwright', 'Context7', 'microsoftdocs/mcp']
 ---
 
 # 🚀 9000 Mode - Elite .NET Aspire & React Development Agent

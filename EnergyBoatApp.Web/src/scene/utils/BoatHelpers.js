@@ -2,8 +2,29 @@
  * Helper utilities for boat positioning, colors, and status
  */
 
+import * as THREE from 'three';
 import { BOAT_COLORS, STATUS_LIGHT_COLORS, DOCK_LAT, DOCK_LON, DOCK_ROTATION, CENTER_LAT, CENTER_LON, SCALE_FACTOR_LAT, SCALE_FACTOR_LON } from './Constants';
 import { latLonToSceneCoords } from './CoordinateConverter';
+
+/**
+ * Convert nautical heading (degrees) to Three.js Y-axis rotation (radians)
+ * 
+ * Coordinate system mapping:
+ * - Nautical: 0° = North, 90° = East, 180° = South, 270° = West
+ * - Our scene: -Z = North, +X = East, +Z = South, -X = West
+ * - Boat default: Bow points in +X direction (East)
+ * - Three.js rotation.y: 0 radians = +X axis
+ * 
+ * @param {number} heading - Nautical heading in degrees (0-360)
+ * @returns {number} Three.js Y-axis rotation in radians
+ */
+export function headingToRotation(heading) {
+  // Convert heading to radians and adjust for our coordinate system
+  // Heading 0° (North) should point to -Z, but boat default is +X (East = 90°)
+  // So we need: rotation = (90 - heading) in radians
+  const rotationDegrees = 90 - heading;
+  return THREE.MathUtils.degToRad(rotationDegrees);
+}
 
 /**
  * Get boat hull color based on status
@@ -36,26 +57,14 @@ export function calculateBoatPosition(boat) {
   const status = boat.status || boat.Status;
   const heading = boat.heading || boat.Heading || 0;
 
-  // Special case: Maintenance boat moored at dock
-  if (boatId === 'BOAT-004' || status === 'Maintenance') {
-    const dockCoords = latLonToSceneCoords(DOCK_LAT, DOCK_LON);
-    
-    return {
-      x: dockCoords.x + 6,  // 6 units to the side
-      y: 1.5,               // Base water level
-      z: dockCoords.z - 2,  // Slight offset forward
-      rotationY: DOCK_ROTATION, // Match dock angle
-    };
-  }
-
-  // Active boats: use geographic coordinates
+  // All boats: use geographic coordinates and heading
   const coords = latLonToSceneCoords(latitude, longitude);
   
   return {
     x: coords.x,
     y: 1.5,  // Base water level
     z: coords.z,
-    rotationY: -(heading * Math.PI / 180), // Convert heading to radians
+    rotationY: headingToRotation(heading), // Convert nautical heading to Three.js rotation
   };
 }
 

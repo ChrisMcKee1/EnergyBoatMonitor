@@ -16,9 +16,9 @@ import * as THREE from 'three';
  * @returns {THREE.Mesh} Positioned mast mesh
  */
 export function createMast(material) {
-  const geometry = new THREE.CylinderGeometry(0.12, 0.15, 3.5, 16);
+  const geometry = new THREE.CylinderGeometry(0.12, 0.15, 4.0, 16);
   const mesh = new THREE.Mesh(geometry, material);
-  mesh.position.set(-0.8, 5.7, 0);
+  mesh.position.set(0, 7.9, 0.8);  // Centered on superstructure
   mesh.castShadow = true;
   return mesh;
 }
@@ -32,7 +32,7 @@ export function createMast(material) {
 export function createRadar(material) {
   const geometry = new THREE.SphereGeometry(0.4, 24, 24);
   const mesh = new THREE.Mesh(geometry, material);
-  mesh.position.set(-0.8, 7.5, 0);
+  mesh.position.set(0, 10.0, 0.8);  // Top of mast
   mesh.castShadow = true;
   return mesh;
 }
@@ -49,7 +49,7 @@ export function createAntennas(material) {
   for (let i = 0; i < 3; i++) {
     const antennaGeometry = new THREE.CylinderGeometry(0.03, 0.03, 1.2, 8);
     const antenna = new THREE.Mesh(antennaGeometry, material);
-    antenna.position.set(-0.8 + (i - 1) * 0.4, 7.2, 0.6);
+    antenna.position.set((i - 1) * 0.3, 9.5, 1.2);  // Spread across width, behind mast
     antennaGroup.add(antenna);
   }
   
@@ -66,17 +66,17 @@ export function createCrane(material) {
   const craneGroup = new THREE.Group();
   
   // Crane base
-  const craneBaseGeometry = new THREE.CylinderGeometry(0.3, 0.35, 1, 16);
+  const craneBaseGeometry = new THREE.CylinderGeometry(0.3, 0.35, 1.2, 16);
   const craneBase = new THREE.Mesh(craneBaseGeometry, material);
-  craneBase.position.set(0.5, 2, 0.8);
+  craneBase.position.set(-1.5, 2.8, 1.0);  // On port side, aft of midships
   craneBase.castShadow = true;
   craneGroup.add(craneBase);
   
   // Crane arm
-  const craneArmGeometry = new THREE.BoxGeometry(0.2, 0.2, 2);
+  const craneArmGeometry = new THREE.BoxGeometry(0.2, 2.5, 0.2);
   const craneArm = new THREE.Mesh(craneArmGeometry, material);
-  craneArm.rotation.x = -Math.PI / 6;
-  craneArm.position.set(0.5, 3, 1.5);
+  craneArm.rotation.z = -Math.PI / 6;
+  craneArm.position.set(-0.5, 4.0, 1.0);
   craneArm.castShadow = true;
   craneGroup.add(craneArm);
   
@@ -89,24 +89,27 @@ export function createCrane(material) {
  * @param {number} x - X position
  * @param {number} y - Y position
  * @param {number} z - Z position
+ * @param {number} length - Length of railing
  * @param {number} rotY - Y rotation in radians (default: 0)
  * @param {THREE.Material} material - Railing material
  * @returns {THREE.Group} Railing group with top rail and posts
  */
-export function createRailing(x, y, z, rotY = 0, material) {
+export function createRailing(x, y, z, length, rotY = 0, material) {
   const railingGroup = new THREE.Group();
   
   // Top rail
-  const topRailGeometry = new THREE.BoxGeometry(0.05, 0.05, 2);
+  const topRailGeometry = new THREE.BoxGeometry(0.05, 0.05, length);
   const topRail = new THREE.Mesh(topRailGeometry, material);
-  topRail.position.y = 0.8;
+  topRail.position.y = 0.6;
   railingGroup.add(topRail);
   
   // Support posts
-  for (let i = 0; i < 5; i++) {
-    const postGeometry = new THREE.CylinderGeometry(0.025, 0.025, 0.8, 8);
+  const numPosts = Math.max(3, Math.floor(length / 0.8) + 1);
+  for (let i = 0; i < numPosts; i++) {
+    const postGeometry = new THREE.CylinderGeometry(0.02, 0.02, 0.6, 8);
     const post = new THREE.Mesh(postGeometry, material);
-    post.position.set(0, 0.4, -0.8 + i * 0.4);
+    const postSpacing = length / (numPosts - 1);
+    post.position.set(0, 0.3, -length/2 + i * postSpacing);
     railingGroup.add(post);
   }
   
@@ -116,21 +119,36 @@ export function createRailing(x, y, z, rotY = 0, material) {
 }
 
 /**
- * Creates port and starboard railings
+ * Creates port and starboard railings around deck perimeter
  * 
  * @param {THREE.Material} material - Railing material
- * @returns {THREE.Group} Group containing both railings
+ * @returns {THREE.Group} Group containing all deck railings
  */
 export function createDeckRailings(material) {
   const railingsGroup = new THREE.Group();
   
-  // Port side (left)
-  const portRailing = createRailing(-2.3, 1.45, 0, Math.PI / 2, material);
+  const deckWidth = 3.0;
+  const deckLength = 7.5;
+  const deckY = 2.25;
+  
+  // Port side (left, -Z)
+  const portRailing = createRailing(0, deckY, -deckWidth / 2, deckLength, 0, material);
   railingsGroup.add(portRailing);
   
-  // Starboard side (right)
-  const starboardRailing = createRailing(2.3, 1.45, 0, Math.PI / 2, material);
+  // Starboard side (right, +Z)
+  const starboardRailing = createRailing(0, deckY, deckWidth / 2, deckLength, 0, material);
   railingsGroup.add(starboardRailing);
+  
+  // Bow (front, +X)
+  const bowRailing = createRailing(deckLength / 2, deckY, 0, deckWidth, Math.PI / 2, material);
+  railingsGroup.add(bowRailing);
+  
+  // Stern (back, -X) - partial railings for helipad access
+  const sternRailingLeft = createRailing(-deckLength / 2, deckY, -deckWidth / 4, deckWidth / 2, Math.PI / 2, material);
+  railingsGroup.add(sternRailingLeft);
+  
+  const sternRailingRight = createRailing(-deckLength / 2, deckY, deckWidth / 4, deckWidth / 2, Math.PI / 2, material);
+  railingsGroup.add(sternRailingRight);
   
   return railingsGroup;
 }
@@ -149,21 +167,21 @@ export function createNavigationLights(portMaterial, starboardMaterial, masthead
   
   // Port light (red - left side)
   const portLight = new THREE.Mesh(lightGeometry, portMaterial);
-  portLight.position.set(-2.2, 2.5, 1);
+  portLight.position.set(2.0, 3.8, -1.2);  // On port side of lower accommodation, forward
   portLight.userData.isNavLight = true;
   portLight.userData.type = 'port';
   lightsGroup.add(portLight);
   
   // Starboard light (green - right side)
   const starboardLight = new THREE.Mesh(lightGeometry, starboardMaterial);
-  starboardLight.position.set(2.2, 2.5, 1);
+  starboardLight.position.set(2.0, 3.8, 1.2);  // On starboard side of lower accommodation, forward
   starboardLight.userData.isNavLight = true;
   starboardLight.userData.type = 'starboard';
   lightsGroup.add(starboardLight);
   
   // Masthead light (white - top)
   const mastheadLight = new THREE.Mesh(lightGeometry, mastheadMaterial);
-  mastheadLight.position.set(-0.8, 7, -0.8);
+  mastheadLight.position.set(0.8, 9.5, 0);  // On mast, forward of radar
   mastheadLight.userData.isNavLight = true;
   mastheadLight.userData.type = 'masthead';
   lightsGroup.add(mastheadLight);
@@ -180,14 +198,25 @@ export function createNavigationPointLights() {
   const pointLightsGroup = new THREE.Group();
   
   // Port point light (red)
-  const portPointLight = new THREE.PointLight(0xFF0000, 0.5, 8);
-  portPointLight.position.set(-2.2, 2.5, 1);
+  const portPointLight = new THREE.PointLight(0xff0000, 5, 5);
+  portPointLight.position.set(2.0, 3.8, -1.2);
+  portPointLight.userData.isNavLight = true;
+  portPointLight.userData.type = 'port';
   pointLightsGroup.add(portPointLight);
   
   // Starboard point light (green)
-  const starboardPointLight = new THREE.PointLight(0x00FF00, 0.5, 8);
-  starboardPointLight.position.set(2.2, 2.5, 1);
+  const starboardPointLight = new THREE.PointLight(0x00ff00, 5, 5);
+  starboardPointLight.position.set(2.0, 3.8, 1.2);
+  starboardPointLight.userData.isNavLight = true;
+  starboardPointLight.userData.type = 'starboard';
   pointLightsGroup.add(starboardPointLight);
+  
+  // Masthead point light (white)
+  const mastheadPointLight = new THREE.PointLight(0xffffff, 5, 8);
+  mastheadPointLight.position.set(0.8, 9.5, 0);
+  mastheadPointLight.userData.isNavLight = true;
+  mastheadPointLight.userData.type = 'masthead';
+  pointLightsGroup.add(mastheadPointLight);
   
   return pointLightsGroup;
 }
@@ -200,17 +229,11 @@ export function createNavigationPointLights() {
  * @returns {Object} Object containing light mesh and point light
  */
 export function createStatusLight(material, color) {
-  const lightGeometry = new THREE.SphereGeometry(0.25, 16, 16);
-  const statusLight = new THREE.Mesh(lightGeometry, material);
-  statusLight.position.set(0, 4, 0);
-  
-  const statusPointLight = new THREE.PointLight(color, 1, 12);
-  statusPointLight.position.set(0, 4, 0);
-  
-  return {
-    light: statusLight,
-    pointLight: statusPointLight
-  };
+  const geometry = new THREE.SphereGeometry(0.2, 16, 16);
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.position.set(0.8, 7.2, 0); // Centered on bridge, top
+  mesh.castShadow = true;
+  return mesh;
 }
 
 /**

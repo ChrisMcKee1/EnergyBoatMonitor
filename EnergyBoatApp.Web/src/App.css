@@ -1,13 +1,13 @@
-/* Fugro Brand Colors - Refined Palette */
+/* Contoso-Sea Brand Colors - Refined Palette */
 :root {
-  --fugro-primary: #E84E0F;
-  --fugro-secondary: #0A4C8C;
-  --fugro-accent: #FF6B35;
-  --fugro-dark: #1a2332;
-  --fugro-navy: #0D3B66;
-  --fugro-light: #F4F7FA;
-  --fugro-gray: #6B7280;
-  --fugro-border: rgba(14, 76, 140, 0.15);
+  --Contoso-Sea-primary: #E84E0F;
+  --Contoso-Sea-secondary: #0A4C8C;
+  --Contoso-Sea-accent: #FF6B35;
+  --Contoso-Sea-dark: #1a2332;
+  --Contoso-Sea-navy: #0D3B66;
+  --Contoso-Sea-light: #F4F7FA;
+  --Contoso-Sea-gray: #6B7280;
+  --Contoso-Sea-border: rgba(14, 76, 140, 0.15);
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
   --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
@@ -27,7 +27,7 @@ html, body, #root {
 
 body {
   font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background: var(--fugro-light);
+  background: var(--Contoso-Sea-light);
   color: #1F2937;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -43,7 +43,7 @@ body {
 
 /* Header Styling - Compact & Modern */
 header {
-  background: linear-gradient(135deg, var(--fugro-secondary) 0%, var(--fugro-navy) 100%);
+  background: linear-gradient(135deg, var(--Contoso-Sea-secondary) 0%, var(--Contoso-Sea-navy) 100%);
   color: white;
   padding: 1rem 2rem;
   box-shadow: var(--shadow-md);
@@ -65,11 +65,11 @@ header {
   flex: 1;
 }
 
-.fugro-logo {
+.Contoso-Sea-logo {
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.2rem;
-  color: var(--fugro-accent);
+  color: var(--Contoso-Sea-accent);
   margin-bottom: 0.25rem;
 }
 
@@ -159,7 +159,7 @@ header {
   padding: 1rem 1.25rem;
   border-radius: 8px;
   box-shadow: var(--shadow-md);
-  border: 1px solid var(--fugro-border);
+  border: 1px solid var(--Contoso-Sea-border);
   pointer-events: auto;
   max-width: calc(100% - 3rem);
   box-sizing: border-box;
@@ -167,7 +167,7 @@ header {
 
 .legend h3 {
   font-size: 0.75rem;
-  color: var(--fugro-dark);
+  color: var(--Contoso-Sea-dark);
   margin-bottom: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -180,7 +180,7 @@ header {
   gap: 0.65rem;
   margin-bottom: 0.5rem;
   font-size: 0.8rem;
-  color: var(--fugro-gray);
+  color: var(--Contoso-Sea-gray);
 }
 
 .legend-item:last-child {
@@ -200,7 +200,7 @@ header {
 /* Fleet Status Dashboard - Right Sidebar */
 .boat-list {
   background: white;
-  border-left: 1px solid var(--fugro-border);
+  border-left: 1px solid var(--Contoso-Sea-border);
   overflow-y: auto;
   height: 100%;
   display: flex;
@@ -208,13 +208,13 @@ header {
 }
 
 .boat-list h2 {
-  color: var(--fugro-dark);
+  color: var(--Contoso-Sea-dark);
   font-size: 1.1rem;
   margin: 0;
   padding: 1.5rem 1.5rem 1rem;
   font-weight: 700;
   letter-spacing: 0.02rem;
-  border-bottom: 2px solid var(--fugro-primary);
+  border-bottom: 2px solid var(--Contoso-Sea-primary);
   flex-shrink: 0;
 }
 
@@ -228,12 +228,12 @@ header {
 }
 
 .boat-list::-webkit-scrollbar-thumb {
-  background: var(--fugro-border);
+  background: var(--Contoso-Sea-border);
   border-radius: 3px;
 }
 
 .boat-list::-webkit-scrollbar-thumb:hover {
-  background: var(--fugro-primary);
+  background: var(--Contoso-Sea-primary);
 }
 
 /* Boat Cards */
@@ -251,7 +251,7 @@ header {
   border-radius: 8px;
   padding: 1rem;
   box-shadow: var(--shadow-sm);
-  border: 1px solid var(--fugro-border);
+  border: 1px solid var(--Contoso-Sea-border);
   transition: all 0.2s ease;
   position: relative;
   margin-bottom: 1rem;
@@ -261,11 +261,11 @@ header {
 .boat-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
-  border-color: var(--fugro-primary);
+  border-color: var(--Contoso-Sea-primary);
 }
 
 .boat-card.selected {
-  border: 2px solid var(--fugro-primary);
+  border: 2px solid var(--Contoso-Sea-primary);
   box-shadow: 0 0 0 3px rgba(232, 78, 15, 0.15), var(--shadow-md);
   background: linear-gradient(to right, rgba(232, 78, 15, 0.03), white);
   transform: translateY(-2px);
@@ -278,7 +278,7 @@ header {
   top: 0;
   bottom: 0;
   width: 4px;
-  background: var(--fugro-primary);
+  background: var(--Contoso-Sea-primary);
   border-radius: 8px 0 0 8px;
 }
 
@@ -294,7 +294,7 @@ header {
 }
 
 .card-header h3 {
-  color: var(--fugro-dark);
+  color: var(--Contoso-Sea-dark);
   font-size: 0.95rem;
   font-weight: 700;
   margin: 0 0 0.25rem 0;
@@ -302,21 +302,21 @@ header {
 
 .vessel-name {
   font-size: 0.75rem;
-  color: var(--fugro-gray);
+  color: var(--Contoso-Sea-gray);
   margin: 0;
   font-weight: 500;
 }
 
 .project-name {
   font-size: 0.75rem;
-  color: var(--fugro-secondary);
+  color: var(--Contoso-Sea-secondary);
   font-weight: 500;
 }
 
 .equipment, .conditions {
   font-size: 0.75rem;
   font-style: italic;
-  color: var(--fugro-gray);
+  color: var(--Contoso-Sea-gray);
 }
 
 .card-body {
@@ -356,12 +356,12 @@ header {
 }
 
 .info-label {
-  color: var(--fugro-gray);
+  color: var(--Contoso-Sea-gray);
   font-weight: 500;
 }
 
 .info-value {
-  color: var(--fugro-dark);
+  color: var(--Contoso-Sea-dark);
   font-weight: 600;
 }
 
@@ -373,19 +373,19 @@ header {
 .project-name {
   font-size: 0.78rem;
   font-weight: 600;
-  color: var(--fugro-secondary);
+  color: var(--Contoso-Sea-secondary);
   line-height: 1.3;
 }
 
 .equipment {
   font-size: 0.75rem;
-  color: var(--fugro-gray);
+  color: var(--Contoso-Sea-gray);
   font-style: italic;
 }
 
 .conditions {
   font-size: 0.75rem;
-  color: var(--fugro-gray);
+  color: var(--Contoso-Sea-gray);
 }
 
 .card-body {
@@ -407,7 +407,7 @@ header {
   align-items: center;
   margin-bottom: 0.35rem;
   font-size: 0.75rem;
-  color: var(--fugro-gray);
+  color: var(--Contoso-Sea-gray);
 }
 
 .energy-bar-bg {
@@ -427,12 +427,12 @@ header {
 
 /* Footer - Compact */
 footer {
-  background: var(--fugro-dark);
+  background: var(--Contoso-Sea-dark);
   color: white;
   text-align: center;
   padding: 0.75rem 1rem;
   font-size: 0.75rem;
-  border-top: 2px solid var(--fugro-primary);
+  border-top: 2px solid var(--Contoso-Sea-primary);
   flex-shrink: 0;
 }
 
@@ -447,7 +447,7 @@ footer p {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: var(--fugro-dark);
+  color: var(--Contoso-Sea-dark);
   font-size: 1.2rem;
   font-weight: 600;
   z-index: 1000;
@@ -505,7 +505,7 @@ footer p {
   .boat-list {
     height: 300px;
     border-left: none;
-    border-top: 1px solid var(--fugro-border);
+    border-top: 1px solid var(--Contoso-Sea-border);
   }
   
   .legend {
@@ -531,7 +531,7 @@ footer p {
     font-size: 1.2rem;
   }
   
-  .fugro-logo {
+  .Contoso-Sea-logo {
     font-size: 0.65rem;
   }
   

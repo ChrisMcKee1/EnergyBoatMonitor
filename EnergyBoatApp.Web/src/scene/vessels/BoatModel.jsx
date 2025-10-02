@@ -34,7 +34,7 @@ export function createBoat(boatData) {
   const hull = BoatGeometry.createHullMesh(hullMaterial);
   boatGroup.add(hull);
   
-  // Hull stripe (Fugro branding)
+  // Hull stripe (Contoso-Sea branding)
   const stripeMaterial = BoatMaterials.createStripeMaterial();
   const stripe = BoatGeometry.createStripeMesh(stripeMaterial);
   boatGroup.add(stripe);
@@ -59,6 +59,9 @@ export function createBoat(boatData) {
   const lowerAccom = BoatGeometry.createLowerAccommodationMesh(accomMaterial);
   boatGroup.add(lowerAccom);
   
+  const midAccom = BoatGeometry.createMidAccommodationMesh(accomMaterial);
+  boatGroup.add(midAccom);
+  
   const bridgeMaterial = BoatMaterials.createBridgeMaterial();
   const bridge = BoatGeometry.createBridgeMesh(bridgeMaterial);
   boatGroup.add(bridge);
@@ -66,6 +69,15 @@ export function createBoat(boatData) {
   const windowMaterial = BoatMaterials.createWindowMaterial();
   const windows = BoatGeometry.createBridgeWindowsMesh(windowMaterial);
   boatGroup.add(windows);
+  
+  // === FUNNEL ===
+  const funnelMaterial = BoatMaterials.createFunnelMaterial();
+  const funnel = BoatGeometry.createFunnelMesh(funnelMaterial);
+  boatGroup.add(funnel);
+  
+  const funnelCapMaterial = BoatMaterials.createFunnelCapMaterial();
+  const funnelCap = BoatGeometry.createFunnelCapMesh(funnelCapMaterial);
+  boatGroup.add(funnelCap);
   
   // === EQUIPMENT ===
   const mastMaterial = BoatMaterials.createMastMaterial();
@@ -140,10 +152,10 @@ export function updateBoatStatus(boatGroup, newStatus) {
   // Update status light
   const statusColor = getStatusLightColor(newStatus);
   boatGroup.traverse((child) => {
-    if (child.isLight && child.type === 'PointLight' && child.position.y === 4) {
+    if (child.isLight && child.type === 'PointLight' && child.position.y === 6.5) {
       child.color.setHex(statusColor);
     }
-    if (child.isMesh && child.geometry.type === 'SphereGeometry' && child.position.y === 4) {
+    if (child.isMesh && child.geometry.type === 'SphereGeometry' && child.position.y === 6.5) {
       const newStatusMaterial = BoatMaterials.createStatusLightMaterial(newStatus);
       child.material.dispose();
       child.material = newStatusMaterial;

@@ -19,14 +19,16 @@ export function createHullMaterial(status = 'Active') {
     metalness: 0.8,
     roughness: 0.3,
     envMapIntensity: 1.0,
+    flatShading: true,
   });
 }
 
 export function createStripeMaterial() {
   return new THREE.MeshStandardMaterial({
-    color: 0xFF6600, // Fugro orange
+    color: 0xFF6600, // Contoso-Sea orange
     metalness: 0.7,
     roughness: 0.4,
+    flatShading: true,
   });
 }
 
@@ -38,6 +40,7 @@ export function createDeckMaterial() {
     color: 0xCCCCCC,
     metalness: 0.6,
     roughness: 0.6,
+    flatShading: true,
   });
 }
 
@@ -46,6 +49,7 @@ export function createHelipadMaterial() {
     color: 0xFFDD00,
     metalness: 0.3,
     roughness: 0.7,
+    flatShading: true,
   });
 }
 
@@ -54,6 +58,7 @@ export function createHelipadMarkingMaterial() {
     color: 0xFF0000,
     metalness: 0.2,
     roughness: 0.8,
+    flatShading: true,
   });
 }
 
@@ -65,6 +70,7 @@ export function createAccommodationMaterial() {
     color: 0xFFFFFF,
     metalness: 0.3,
     roughness: 0.5,
+    flatShading: true,
   });
 }
 
@@ -73,6 +79,7 @@ export function createBridgeMaterial() {
     color: 0xF0F0F0,
     metalness: 0.4,
     roughness: 0.4,
+    flatShading: true,
   });
 }
 
@@ -83,6 +90,28 @@ export function createWindowMaterial() {
     roughness: 0.1,
     transparent: true,
     opacity: 0.3,
+    flatShading: true,
+  });
+}
+
+/**
+ * Funnel Materials
+ */
+export function createFunnelMaterial() {
+  return new THREE.MeshStandardMaterial({
+    color: 0x8B4513,  // Dark brown/rust color
+    metalness: 0.7,
+    roughness: 0.4,
+    flatShading: true,
+  });
+}
+
+export function createFunnelCapMaterial() {
+  return new THREE.MeshStandardMaterial({
+    color: 0x222222,  // Dark cap
+    metalness: 0.8,
+    roughness: 0.3,
+    flatShading: true,
   });
 }
 
@@ -94,6 +123,7 @@ export function createMastMaterial() {
     color: 0xDDDDDD,
     metalness: 0.8,
     roughness: 0.2,
+    flatShading: true,
   });
 }
 
@@ -102,6 +132,7 @@ export function createRadarMaterial() {
     color: 0xFFFFFF,
     metalness: 0.6,
     roughness: 0.3,
+    flatShading: true,
   });
 }
 
@@ -110,6 +141,7 @@ export function createAntennaMaterial() {
     color: 0x888888,
     metalness: 0.7,
     roughness: 0.3,
+    flatShading: true,
   });
 }
 
@@ -118,6 +150,7 @@ export function createCraneMaterial() {
     color: 0xFFAA00,
     metalness: 0.5,
     roughness: 0.5,
+    flatShading: true,
   });
 }
 
@@ -126,6 +159,7 @@ export function createRailingMaterial() {
     color: 0xCCCCCC,
     metalness: 0.7,
     roughness: 0.4,
+    flatShading: true,
   });
 }
 
@@ -137,6 +171,7 @@ export function createPortLightMaterial() {
     color: 0xFF0000, // Red (port side)
     emissive: 0xFF0000,
     emissiveIntensity: 0.8,
+    flatShading: true,
   });
 }
 
@@ -145,6 +180,7 @@ export function createStarboardLightMaterial() {
     color: 0x00FF00, // Green (starboard side)
     emissive: 0x00FF00,
     emissiveIntensity: 0.8,
+    flatShading: true,
   });
 }
 
@@ -153,6 +189,7 @@ export function createMastheadLightMaterial() {
     color: 0xFFFFFF, // White (masthead)
     emissive: 0xFFFFFF,
     emissiveIntensity: 1.0,
+    flatShading: true,
   });
 }
 
@@ -162,6 +199,7 @@ export function createStatusLightMaterial(status = 'Active') {
     color: statusColor,
     emissive: statusColor,
     emissiveIntensity: 1.0,
+    flatShading: true,
   });
 }
 
@@ -390,6 +428,7 @@ export function createDishMaterial() {
     color: 0xFFFFFF,
     metalness: 0.8,
     roughness: 0.2,
+    side: THREE.BackSide,  // Render inside surface for concave dish appearance
   });
 }
 
@@ -403,6 +442,8 @@ export default {
   createAccommodationMaterial,
   createBridgeMaterial,
   createWindowMaterial,
+  createFunnelMaterial,
+  createFunnelCapMaterial,
   createMastMaterial,
   createRadarMaterial,
   createAntennaMaterial,

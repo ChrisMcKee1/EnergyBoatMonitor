@@ -71,7 +71,7 @@ export function createLifeRings(ringMaterial, stripeMaterial) {
     // Main ring
     const ringGeometry = new THREE.TorusGeometry(0.3, 0.1, 16, 32);
     const ring = new THREE.Mesh(ringGeometry, ringMaterial);
-    ring.position.set(-3 + i * 6, 1.2, -3.5);
+    ring.position.set(-3 + i * 6, .45, -4.1);
     ringsGroup.add(ring);
     
     // White safety stripe

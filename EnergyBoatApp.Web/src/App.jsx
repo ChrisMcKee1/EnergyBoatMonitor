@@ -2,6 +2,13 @@ import { useState, useEffect } from 'react';
 import BoatScene from './components/BoatScene';
 import './App.css';
 
+// Convert heading degrees to compass direction
+function headingToCompass(degrees) {
+  const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+  const index = Math.round(((degrees % 360) / 22.5)) % 16;
+  return directions[index];
+}
+
 function App() {
   const [boats, setBoats] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -136,7 +143,7 @@ function App() {
       <header className="app-header">
         <div className="header-content">
           <div className="brand">
-            <div className="fugro-logo">FUGRO</div>
+            <div className="Contoso-Sea-logo">CONTOSO-SEA</div>
             <h1>Marine Fleet Monitor</h1>
             <p className="tagline">Real-time Geo-data Visualization & Fleet Management</p>
           </div>
@@ -282,6 +289,15 @@ function App() {
                         </div>
                       )}
                       
+                      {(boat.heading !== undefined || boat.Heading !== undefined) && (
+                        <div className="boat-info-row">
+                          <span className="info-label">Heading:</span>
+                          <span className="info-value">
+                            {headingToCompass(boat.heading || boat.Heading || 0)} ({((boat.heading || boat.Heading) ?? 0).toFixed(0)}°)
+                          </span>
+                        </div>
+                      )}
+                      
                       {(boat.crewCount || boat.CrewCount) && (
                         <div className="boat-info-row">
                           <span className="info-label">Crew:</span>
@@ -312,7 +328,7 @@ function App() {
       )}
       
       <footer className="app-footer">
-        <p>© 2025 Fugro | Creating a safe and liveable world through Geo-data intelligence</p>
+        <p>© 2025 Contoso-Sea | Creating a safe and liveable world through Geo-data intelligence</p>
       </footer>
     </div>
   );

@@ -4,7 +4,7 @@ import SceneControls from './SceneControls';
 
 // Scene utilities
 import { CAMERA_INITIAL_POSITION } from '../scene/utils/Constants';
-import { getBoatColor, getStatusLightColor } from '../scene/utils/BoatHelpers';
+import { getBoatColor, getStatusLightColor, headingToRotation } from '../scene/utils/BoatHelpers';
 import { CoordinateConverter } from '../scene/utils/CoordinateConverter';
 
 // Core systems
@@ -18,7 +18,7 @@ import { createSkySystem, toggleDayNight as toggleDayNightSystem } from '../scen
 import { createBoundaryBuoys } from '../scene/environment/NavigationBuoys.jsx';
 
 // Vessels
-import { createBoat as createBoatModel } from '../scene/vessels/BoatModel.jsx';
+import { createBoatModel } from '../scene/vessels/BoatModel.js';
 
 // Infrastructure  
 import { createCompleteDock } from '../scene/infrastructure/DockStructure.jsx';
@@ -198,44 +198,35 @@ const BoatScene = ({
       const latitude = boat.latitude || boat.Latitude;
       const longitude = boat.longitude || boat.Longitude;
       const status = boat.status || boat.Status;
-      
-      console.log(`🚢 Processing boat ${boatId}:`, { latitude, longitude, status });
-      
-      // Create boat mesh if it doesn't exist
-      if (!boatMeshesRef.current[boatId]) {
-        console.log(`🚢 Creating new boat mesh for ${boatId}`);
-        const boatMesh = createBoatModel(boat);
-        boatMeshesRef.current[boatId] = boatMesh;
+
+      let boatMesh = boatMeshesRef.current[boatId];
+
+      if (!boatMesh) {
+        // Use the new createBoatModel function
+        boatMesh = createBoatModel(boat); 
+        boatMesh.name = `boat-${boatId}`;
         sceneRef.current.add(boatMesh);
-        console.log(`🚢 Boat mesh created and added to scene for ${boatId}`);
+        boatMeshesRef.current[boatId] = boatMesh;
+        console.log(`✅ Created boat ${boatId}`);
       }
+
+      // Update boat's status and data for use in animation loop
+      boatMesh.userData.status = status;
       
       // Update boat position
-      const boatMesh = boatMeshesRef.current[boatId];
-      if (boatMesh && latitude !== undefined && longitude !== undefined) {
-        // Special positioning for maintenance boats - moor alongside dock
-        if (boatId === 'BOAT-004' || status === 'Maintenance') {
-          const dockLatLon = { latitude: 51.5100, longitude: -0.1350 };
-          const dockPos = CoordinateConverter.latLonToScene(dockLatLon);
-          
-          boatMesh.position.x = dockPos.x + 6;
-          boatMesh.position.y = 1.0; // Float above water
-          boatMesh.position.z = dockPos.z - 2;
-          boatMesh.rotation.y = Math.PI / 4;
-          console.log(`🚢 Positioned maintenance boat ${boatId} at:`, { x: (dockPos.x + 6).toFixed(2), z: (dockPos.z - 2).toFixed(2) });
-        } else {
-          // Active boats use their GPS coordinates
-          const boatLatLon = { latitude, longitude };
-          const boatPos = CoordinateConverter.latLonToScene(boatLatLon);
-          
-          boatMesh.position.x = boatPos.x;
-          boatMesh.position.y = 1.0; // Float above water
-          boatMesh.position.z = boatPos.z;
-          
-          const heading = boat.heading || boat.Heading || 0;
-          boatMesh.rotation.y = -(heading * Math.PI / 180);
-          console.log(`🚢 Positioned active boat ${boatId} at:`, { x: boatPos.x.toFixed(2), z: boatPos.z.toFixed(2) }, 'heading:', heading);
-        }
+      if (latitude !== undefined && longitude !== undefined) {
+        // Standard positioning for all boats now
+        const boatLatLon = { latitude, longitude };
+        const boatPos = CoordinateConverter.latLonToScene(boatLatLon);
+        
+        boatMesh.position.x = boatPos.x;
+        boatMesh.position.y = 0; // Model origin is at water level
+        boatMesh.position.z = boatPos.z;
+        
+        // Apply rotation based on heading from API
+        const heading = boat.heading || boat.Heading || 0;
+        boatMesh.rotation.y = headingToRotation(heading);
+        console.log(`🚢 Positioned boat ${boatId} at:`, { x: boatPos.x.toFixed(2), z: boatPos.z.toFixed(2) }, 'heading:', heading, 'rotation:', boatMesh.rotation.y.toFixed(2));
       }
     });
   }, [boats]);

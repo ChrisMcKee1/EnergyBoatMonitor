@@ -2,7 +2,7 @@
 
 A real-time 3D maritime fleet visualization application built with .NET Aspire 9.5, featuring autonomous boat navigation simulation with C# backend and React + Three.js frontend.
 
-![Maritime Fleet Visualization](Fugro-Blue-Essence-ship-and-Fugro-Blue-Volta-ROV.jpg)
+![Maritime Fleet Visualization](Contoso-Sea-Blue-Essence-ship-and-Contoso-Sea-Blue-Volta-ROV.jpg)
 
 ## 🚀 Features
 
@@ -36,9 +36,20 @@ EnergyBoatApp/
 
 ### Prerequisites
 
-- [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
-- [Aspire workload](https://learn.microsoft.com/en-us/dotnet/aspire/fundamentals/setup-tooling): `dotnet workload install aspire`
-- Node.js 20+ and npm (for frontend)
+- **[.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)** (required - this project targets .NET 9.0)
+- **Aspire CLI** - Install using one of these methods:
+
+  ```powershell
+  # Option 1: Install as native executable (recommended)
+  Invoke-Expression "& { $(Invoke-RestMethod https://aspire.dev/install.ps1) }"
+  
+  # Option 2: Install as .NET global tool
+  dotnet tool install -g Aspire.Cli --prerelease
+  ```
+
+- **[Node.js 20+](https://nodejs.org/)** and npm (for React + Vite frontend)
+
+> **Note**: Aspire automatically installs npm dependencies before building via the AppHost's `RestoreNpm` build target. You don't need to run `npm install` manually.
 
 ### Running the Application
 
@@ -47,17 +58,30 @@ cd EnergyBoatApp.AppHost
 aspire run
 ```
 
-The Aspire dashboard will open at `http://localhost:15888` showing:
+**What happens automatically:**
+1. Aspire's `RestoreNpm` build target checks if `node_modules` exists in the Web project
+2. If missing, runs `npm install` automatically
+3. Aspire builds both the API and Web projects
+4. Launches the Aspire dashboard at `http://localhost:15888`
+5. Starts both services with proper orchestration
+
+The Aspire dashboard will open showing:
+
 - **webfrontend** - React app at `http://localhost:5173`
 - **apiservice** - C# API at `https://localhost:7585`
 - **Logs, Traces, Metrics** - OpenTelemetry data from both services
 
-### Aspire CLI Options
+### Aspire CLI Commands
 
 ```powershell
-aspire run           # Standard run
-aspire run --watch   # Auto-restart on file changes
-aspire run --debug   # Enable debug logging
+aspire run                  # Standard run (opens dashboard)
+aspire run --watch          # Auto-restart on file changes
+aspire run --debug          # Enable debug logging
+aspire new                  # Create new Aspire project from templates
+aspire add                  # Add hosting integration package to AppHost
+aspire publish              # Generate deployment artifacts (Preview)
+aspire config [get|set]     # Configure Aspire settings and feature flags
+aspire --version            # Display Aspire CLI version
 ```
 
 **Important**: Aspire handles all building and dependency restoration. Do NOT run `dotnet build` or `npm install` manually.

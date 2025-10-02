@@ -86,10 +86,10 @@ class BoatSimulator
                 new Waypoint(51.5010, -0.1450), // Southwest (south of dock)
                 new Waypoint(51.5010, -0.1200)  // Return to start
             },
-            // BOAT-004: Stays docked (maintenance)
+            // BOAT-004: Stays docked (maintenance) - positioned perpendicular to dock edge
             ["BOAT-004"] = new List<Waypoint>
             {
-                new Waypoint(51.5100, -0.1350)  // Dock position
+                new Waypoint(51.5090, -0.1390)  // Centered along dock, floating alongside with clearance
             }
         };
 
@@ -102,7 +102,7 @@ class BoatSimulator
                 Longitude = -0.1278,
                 Status = "Active",
                 EnergyLevel = 85.5,
-                VesselName = "Fugro Voyager",
+                VesselName = "Contoso Sea Voyager",
                 SurveyType = "Geophysical Survey",
                 Project = "Dogger Bank Offshore Wind Farm",
                 Equipment = "Multibeam Sonar, Magnetometer",
@@ -122,7 +122,7 @@ class BoatSimulator
                 Longitude = -0.1420,
                 Status = "Charging",
                 EnergyLevel = 42.3,
-                VesselName = "Fugro Pioneer",
+                VesselName = "Contoso Sea Pioneer",
                 SurveyType = "ROV Operations",
                 Project = "Subsea Cable Route Survey",
                 Equipment = "ROV, Side-scan Sonar",
@@ -142,7 +142,7 @@ class BoatSimulator
                 Longitude = -0.1200,
                 Status = "Active",
                 EnergyLevel = 91.2,
-                VesselName = "Fugro Navigator",
+                VesselName = "Contoso Sea Navigator",
                 SurveyType = "Geotechnical Survey",
                 Project = "North Sea Pipeline Inspection",
                 Equipment = "CPT, Seabed Sampling",
@@ -158,11 +158,11 @@ class BoatSimulator
             new BoatState
             {
                 Id = "BOAT-004",
-                Latitude = 51.5100,
-                Longitude = -0.1350,
+                Latitude = 51.5090,
+                Longitude = -0.1390,
                 Status = "Maintenance",
                 EnergyLevel = 15.7,
-                VesselName = "Fugro Explorer",
+                VesselName = "Contoso Sea Explorer",
                 SurveyType = "Standby",
                 Project = "Scheduled Maintenance",
                 Equipment = "Multibeam, Sub-bottom Profiler",
@@ -170,7 +170,7 @@ class BoatSimulator
                 Speed = "0 knots",
                 CrewCount = 12,
                 Conditions = "In port",
-                Heading = 0.0,
+                Heading = 315.0,  // Northwest - perpendicular to dock (45 + 270 = 315 degrees)
                 SpeedKnots = 0.0,
                 CurrentWaypointIndex = 0,
                 OriginalSpeedKnots = 0.0
@@ -217,7 +217,8 @@ class BoatSimulator
             b.AreaCovered,
             b.Speed,
             b.CrewCount,
-            b.Conditions
+            b.Conditions,
+            b.Heading  // Include heading in the response
         ));
     }
 
@@ -420,5 +421,6 @@ record BoatStatus(
     double AreaCovered,
     string Speed,
     int CrewCount,
-    string Conditions
+    string Conditions,
+    double Heading  // Add heading to the response
 );
