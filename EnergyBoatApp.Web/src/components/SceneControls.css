@@ -1,0 +1,243 @@
+.scene-controls {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 1000;
+}
+
+.control-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+.control-button:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+.control-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.control-button .icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.control-button .label {
+  flex: 1;
+  text-align: left;
+}
+
+.day-night-toggle {
+  background: linear-gradient(135deg, rgba(255, 230, 100, 0.9) 0%, rgba(255, 255, 255, 0.9) 100%);
+}
+
+.day-night-toggle:hover {
+  background: linear-gradient(135deg, rgba(255, 230, 100, 1) 0%, rgba(255, 255, 255, 1) 100%);
+}
+
+.reset-button {
+  background: linear-gradient(135deg, rgba(100, 200, 255, 0.9) 0%, rgba(255, 255, 255, 0.9) 100%);
+}
+
+.reset-button:hover {
+  background: linear-gradient(135deg, rgba(100, 200, 255, 1) 0%, rgba(255, 255, 255, 1) 100%);
+}
+
+/* Speed Control Styles */
+.speed-control {
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  min-width: 200px;
+}
+
+.speed-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.speed-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.speed-label {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+}
+
+.speed-slider {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(to right, 
+    rgba(100, 150, 255, 0.3) 0%, 
+    rgba(100, 200, 255, 0.5) 50%, 
+    rgba(255, 150, 100, 0.7) 100%);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  margin: 8px 0;
+}
+
+.speed-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.speed-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.speed-slider::-webkit-slider-thumb:active {
+  transform: scale(1.1);
+  background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
+}
+
+.speed-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.speed-slider::-moz-range-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.speed-slider::-moz-range-thumb:active {
+  transform: scale(1.1);
+  background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
+}
+
+.speed-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.speed-value {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #4CAF50;
+}
+
+.speed-description {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.keyboard-hint {
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  max-width: 200px;
+}
+
+.keyboard-hint p {
+  margin: 0 0 6px 0;
+}
+
+.keyboard-hint p:last-child {
+  margin-bottom: 0;
+}
+
+.keyboard-hint strong {
+  color: #FFD700;
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .scene-controls {
+    top: 10px;
+    right: 10px;
+    gap: 8px;
+  }
+
+  .control-button {
+    padding: 10px 12px;
+    min-width: 100px;
+    font-size: 12px;
+  }
+
+  .control-button .icon {
+    font-size: 18px;
+  }
+
+  .speed-control {
+    min-width: 160px;
+    padding: 10px 12px;
+  }
+
+  .speed-label {
+    font-size: 11px;
+  }
+
+  .speed-value {
+    font-size: 14px;
+  }
+
+  .speed-description {
+    font-size: 10px;
+  }
+
+  .keyboard-hint {
+    font-size: 10px;
+    padding: 8px 12px;
+    max-width: 160px;
+  }
+}
