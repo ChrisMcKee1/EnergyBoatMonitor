@@ -53,8 +53,7 @@ EnergyBoatApp/
 
 ### Running the Application
 
-```powershell
-cd EnergyBoatApp.AppHost
+```bash
 aspire run
 ```
 
