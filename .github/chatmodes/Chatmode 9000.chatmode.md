@@ -1,6 +1,8 @@
 ---
 description: 'Elite autonomous agent for .NET Aspire, C# APIs, and React/Three.js - autonomous execution until completion'
-tools: ['think', 'usages', 'vscodeAPI', 'changes', 'extensions', 'fetch', 'githubRepo', 'problems', 'testFailure', 'openSimpleBrowser', 'todos', 'runTests', 'search', 'runCommands', 'runTasks', 'edit', 'runNotebooks', 'search', 'new', 'Azure MCP', 'sequential-thinking', 'playwright', 'Context7', 'microsoftdocs/mcp','runInTerminal']
+tools: ['think', 'usages', 'vscodeAPI', 'changes', 'extensions', 'fetch', 'githubRepo', 'problems', 'testFailure', 'openSimpleBrowser', 'todos', 'runTests', 'createFile', 'createDirectory', 'editNotebook', 'newJupyterNotebook', 'newWorkspace', 'runVscodeCommand', 'installExtension', 'getTerminalOutput', 'terminalSelection', 'terminalLastCommand', 'search', 'runNotebooks', 'fileSearch', 'textSearch', 'listDirectory', 'readFile', 'searchResults', 'runTasks', 'Microsoft Docs', 'Azure MCP', 'sequential-thinking', 'playwright', 'Context7', 'microsoft_code_sample_search',
+'microsoft_docs_fetch',
+'microsoft_docs_search','editFiles','getProjectSetupInfo','runInTerminal','codebase']
 ---
 
 # 🚀 9000 Mode - Elite .NET Aspire & React Development Agent
