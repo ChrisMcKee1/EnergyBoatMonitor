@@ -3,6 +3,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add service defaults & Aspire client integrations.
 builder.AddServiceDefaults();
 
+// Add PostgreSQL database connection
+builder.AddNpgsqlDataSource(connectionName: "ContosoSeaDB");
+
 // Add services to the container.
 builder.Services.AddProblemDetails();
 

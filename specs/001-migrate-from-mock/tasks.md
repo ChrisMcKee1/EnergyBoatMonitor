@@ -40,35 +40,39 @@
 
 ---
 
-## Phase 3.1: Setup & Infrastructure
+## Phase 3.1: Setup & Infrastructure ✅ COMPLETE
 
-### T001: Configure Aspire PostgreSQL Hosting
+### T001: ✅ Configure Aspire PostgreSQL Hosting
 
 **File**: `EnergyBoatApp.AppHost/AppHost.cs`  
 **Description**: Add `AddAzurePostgresFlexibleServer().RunAsContainer()` with `WithPgAdmin()` and `WithDataVolume()` following research.md patterns  
 **Dependencies**: None  
-**References**: research.md Section 1, plan.md Technical Context
+**References**: research.md Section 1, plan.md Technical Context  
+**Completed**: October 6, 2025 - Added Aspire.Hosting.Azure.PostgreSQL package, configured container with delegate pattern for pgAdmin and data volume
 
-### T002: Configure User Secrets for PostgreSQL Credentials
+### T002: ✅ Configure User Secrets for PostgreSQL Credentials
 
 **Command**: `dotnet user-secrets set "Parameters:postgres-username" "admin"` and `dotnet user-secrets set "Parameters:postgres-password" "YourSecurePassword123!"`  
 **Description**: Initialize User Secrets for local PostgreSQL authentication as documented in quickstart.md  
 **Dependencies**: None  
-**References**: quickstart.md Step 2, research.md Section 3
+**References**: quickstart.md Step 2, research.md Section 3  
+**Completed**: October 6, 2025 - Both secrets configured and verified in AppHost project
 
-### T003: Add Npgsql Client Integration to ApiService
+### T003: ✅ Add Npgsql Client Integration to ApiService
 
 **File**: `EnergyBoatApp.ApiService/EnergyBoatApp.ApiService.csproj`  
 **Description**: Add `Aspire.Npgsql` NuGet package (version 9.5.0) and configure `AddNpgsqlDataSource()` in Program.cs  
 **Dependencies**: T001 (requires database reference from AppHost)  
-**References**: research.md Section 2, plan.md Technical Context
+**References**: research.md Section 2, plan.md Technical Context  
+**Completed**: October 6, 2025 - Package added, AddNpgsqlDataSource configured with "ContosoSeaDB" connection name, AppHost reference wired
 
-### T004: Create Database Migration SQL Script
+### T004: ✅ Create Database Migration SQL Script
 
-**File**: `scripts/001-initial-schema.sql`  
+**File**: `EnergyBoatApp.ApiService/Migrations/001-initial-schema.sql` (created in Migrations folder instead of scripts/)  
 **Description**: Create SQL script with all 4 tables (boats, boat_states, routes, waypoints) following data-model.md schema exactly, including indexes  
 **Dependencies**: None  
-**References**: data-model.md Table Definitions, data-model.md Indexes & Performance Optimization
+**References**: data-model.md Table Definitions, data-model.md Indexes & Performance Optimization  
+**Completed**: October 6, 2025 - All 4 tables created with constraints, indexes, and comments
 
 ---
 
