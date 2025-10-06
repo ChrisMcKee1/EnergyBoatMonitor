@@ -1,7 +1,22 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
+// Configure PostgreSQL with password authentication for local development
+var postgresUsername = builder.AddParameter("postgres-username", secret: true);
+var postgresPassword = builder.AddParameter("postgres-password", secret: true);
+
+var postgres = builder.AddAzurePostgresFlexibleServer("postgres")
+    .RunAsContainer(container =>
+    {
+        container.WithPgAdmin()
+                 .WithDataVolume();
+    })
+    .WithPasswordAuthentication(postgresUsername, postgresPassword);
+
+var db = postgres.AddDatabase("ContosoSeaDB");
+
 // Add the API service
 var apiService = builder.AddProject<Projects.EnergyBoatApp_ApiService>("apiservice")
+    .WithReference(db)
     .WithExternalHttpEndpoints();
 
 // Add React + Three.js frontend as npm app

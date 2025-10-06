@@ -1,18 +1,18 @@
 # ⚡ Energy Boat Monitor
 
-A real-time 3D maritime fleet visualization application built with .NET Aspire 9.5, featuring autonomous boat navigation simulation with C# backend and React + Three.js frontend.
+A real-time 3D maritime fleet monitoring system built with .NET Aspire 9.5. Features autonomous vessel navigation simulation with physics-based energy management, powered by a C# backend and React + Three.js frontend.
 
 ![Maritime Fleet Visualization](Contoso-Sea-Blue-Essence-ship-and-Contoso-Sea-Blue-Volta-ROV.jpg)
 
 ## 🚀 Features
 
 - **Real-time 3D Visualization**: Interactive Three.js scene with WebGL rendering
-- **Autonomous Navigation**: Boats follow predefined waypoint routes using Haversine formula
+- **Autonomous Navigation**: Vessels follow predefined waypoint routes using Haversine formula
 - **Dynamic Threshold System**: Adaptive waypoint detection prevents oscillation at high speeds
-- **Status-based Rendering**: Color-coded boats based on energy levels (Active, Charging, Maintenance)
-- **Speed Multiplier**: 1x-10x simulation speed for testing navigation algorithms
-- **Dock-Centered Coordinates**: Scene origin at dock position for realistic spatial relationships
-- **OpenTelemetry Integration**: Browser and backend telemetry sent to Aspire dashboard
+- **Status-based Rendering**: Color-coded vessels based on energy levels (Active, Charging, Maintenance)
+- **Variable Simulation Speed**: 1x-10x speed multiplier for testing navigation algorithms
+- **Dock-Centered Coordinates**: Scene origin positioned at dock for realistic spatial relationships
+- **Integrated Telemetry**: Browser and backend telemetry streamed to Aspire dashboard
 
 ## 🏗️ Architecture
 
