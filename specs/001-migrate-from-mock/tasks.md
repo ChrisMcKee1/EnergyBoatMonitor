@@ -180,47 +180,53 @@
 **References**: research.md Section 2, data-model.md Query Patterns  
 **Completed**: October 6, 2025 - Implemented all 5 repository methods with direct SQL: GetAllBoatsWithStatesAsync (JOIN boats + boat_states), GetBoatByIdAsync (parameterized query), UpdateBoatStateAsync (12 field UPDATE with parameters), GetWaypointsForBoatAsync (ordered by sequence), ResetAllBoatsAsync (transactional CASE statement reset matching data-model.md initial values), includes structured logging for all operations, proper connection/transaction management with using statements, parameterized queries to prevent SQL injection
 
-### T017: Create Database Initialization Service
+### T017: ✅ Create Database Initialization Service
 
 **File**: `EnergyBoatApp.ApiService/Services/DatabaseInitializationService.cs`  
 **Description**: Create IHostedService that runs 001-initial-schema.sql on startup if tables don't exist, implements idempotent schema creation  
 **Dependencies**: T004, T016  
-**References**: quickstart.md Step 4, plan.md Migration section
+**References**: quickstart.md Step 4, plan.md Migration section  
+**Completed**: October 6, 2025 - Created IHostedService that checks for existing tables (idempotent), reads and executes 001-initial-schema.sql on startup, includes transaction rollback on failure, registered in Program.cs, configured .csproj to copy SQL files to output directory (CopyToOutputDirectory="PreserveNewest")
 
-### T018: Create Seed Data Service
+### T018: ✅ Create Seed Data Service
 
 **File**: `EnergyBoatApp.ApiService/Services/SeedDataService.cs`  
 **Description**: Create service that populates boats, boat_states, routes, and waypoints tables with 4 initial boats if database is empty, using sample data from data-model.md  
 **Dependencies**: T017  
-**References**: data-model.md Sample Data, plan.md Migration
+**References**: data-model.md Sample Data, plan.md Migration  
+**Completed**: October 6, 2025 - Created IHostedService that checks if boats table is empty, seeds all 4 boats with metadata (Contoso Sea Voyager, Pioneer, Navigator, Explorer), initial states (lat/lon/heading/energy from data-model.md), routes (Rectangle/Zigzag/Triangle patterns + Docked), 15 waypoints total across all routes, uses transaction for atomicity, registered in Program.cs to run after DatabaseInitializationService
 
-### T019: Update BoatSimulator to Use Repository
+### T019: ✅ Update BoatSimulator to Use Repository
 
 **File**: `EnergyBoatApp.ApiService/Program.cs`  
 **Description**: Refactor UpdateBoatPositions() method to read waypoints from database via IBoatRepository, update boat_states table instead of in-memory dictionary, maintain existing Haversine navigation logic  
 **Dependencies**: T016, T018  
-**References**: plan.md Summary, contracts/get-boats.md Behavioral Contracts
+**References**: plan.md Summary, contracts/get-boats.md Behavioral Contracts  
+**Completed**: October 6, 2025 - Refactored BoatSimulator class to use IServiceProvider for scoped repository access, replaced in-memory `_boatStates` and `_boatRoutes` dictionaries with async database calls via IBoatRepository, updated GetCurrentBoatStatesAsync() to load boats/states/waypoints from DB and persist updates with `with` expressions (immutable records), removed 200+ lines of hardcoded boat/route data, simulation logic intact (Haversine distance calc, waypoint navigation, battery degradation unchanged), API endpoints now async
 
-### T020: Implement GET /api/boats with Database Query
+### T020: ✅ Implement GET /api/boats with Database Query
 
 **File**: `EnergyBoatApp.ApiService/Program.cs`  
 **Description**: Replace in-memory _boatStates.Values with IBoatRepository.GetAllBoatsWithStatesAsync(), maintain exact BoatStatus record contract from contracts/get-boats.md, handle speed multiplier parameter  
 **Dependencies**: T019  
-**References**: contracts/get-boats.md Request/Response Specification
+**References**: contracts/get-boats.md Request/Response Specification  
+**Completed**: October 6, 2025 - Updated MapGet("/api/boats") to be async, now calls `await simulator.GetCurrentBoatStatesAsync(speed)` which internally uses repository.GetAllBoatsWithStatesAsync(), returns same BoatStatus DTO maintaining API contract, no frontend changes required, speed parameter still controls simulation multiplier
 
-### T021: Implement POST /api/boats/reset with Database Transaction
+### T021: ✅ Implement POST /api/boats/reset with Database Transaction
 
 **File**: `EnergyBoatApp.ApiService/Program.cs`  
 **Description**: Replace in-memory reset logic with IBoatRepository.ResetAllBoatsAsync(), return ResetResponse matching contracts/post-boats-reset.md, use database transaction for atomicity  
 **Dependencies**: T019  
-**References**: contracts/post-boats-reset.md Behavioral Contracts
+**References**: contracts/post-boats-reset.md Behavioral Contracts  
+**Completed**: October 6, 2025 - Updated MapPost("/api/boats/reset") to be async, now calls `await simulator.ResetToInitialPositionsAsync()` which internally uses repository.ResetAllBoatsAsync() (transactional SQL with initial_* columns), returns same response format, resets _lastUpdate timestamp to prevent position jumps
 
-### T022: Add Health Checks for PostgreSQL
+### T022: ✅ Add Health Checks for PostgreSQL
 
 **File**: `EnergyBoatApp.ApiService/Program.cs`  
 **Description**: Configure Aspire health checks for NpgsqlDataSource, add /health endpoint returning database connection status  
 **Dependencies**: T003  
-**References**: research.md Section 2, plan.md Technical Context (Aspire observability)
+**References**: research.md Section 2, plan.md Technical Context (Aspire observability)  
+**Completed**: October 6, 2025 - Added `builder.Services.AddHealthChecks().AddNpgSql(connectionString)` using AspNetCore.HealthChecks.Npgsql (already included via Aspire), added `app.MapHealthChecks("/health")` endpoint returning Healthy/Unhealthy JSON based on database connectivity, integrates with Aspire dashboard health monitoring
 
 ---
 
