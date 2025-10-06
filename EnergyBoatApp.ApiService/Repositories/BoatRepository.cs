@@ -21,6 +21,9 @@ public class BoatRepository : IBoatRepository
     /// <inheritdoc/>
     public async Task<IEnumerable<(Boat boat, BoatState state)>> GetAllBoatsWithStatesAsync()
     {
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        _logger.LogDebug("GetAllBoatsWithStatesAsync: Starting query");
+
         const string sql = @"
             SELECT 
                 b.id, b.vessel_name, b.crew_count, b.equipment, b.project, b.survey_type, 
@@ -34,12 +37,14 @@ public class BoatRepository : IBoatRepository
 
         var results = new List<(Boat, BoatState)>();
 
-        await using var connection = await _dataSource.OpenConnectionAsync();
-        await using var command = connection.CreateCommand();
-        command.CommandText = sql;
+        try
+        {
+            await using var connection = await _dataSource.OpenConnectionAsync();
+            await using var command = connection.CreateCommand();
+            command.CommandText = sql;
 
-        await using var reader = await command.ExecuteReaderAsync();
-        while (await reader.ReadAsync())
+            await using var reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
         {
             var boat = new Boat(
                 Id: reader.GetString(0),
@@ -71,8 +76,32 @@ public class BoatRepository : IBoatRepository
             results.Add((boat, state));
         }
 
-        _logger.LogDebug("Retrieved {Count} boats with states", results.Count);
-        return results;
+            stopwatch.Stop();
+            var elapsedMs = stopwatch.ElapsedMilliseconds;
+
+            if (elapsedMs > 100)
+            {
+                _logger.LogWarning("GetAllBoatsWithStatesAsync: Slow query detected - {ElapsedMs}ms (threshold: 100ms), returned {Count} boats", 
+                    elapsedMs, results.Count);
+            }
+            else
+            {
+                _logger.LogDebug("GetAllBoatsWithStatesAsync: Query completed in {ElapsedMs}ms, returned {Count} boats", 
+                    elapsedMs, results.Count);
+            }
+
+            return results;
+        }
+        catch (NpgsqlException ex)
+        {
+            _logger.LogError(ex, "GetAllBoatsWithStatesAsync: Database error occurred - {ErrorCode}", ex.ErrorCode);
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetAllBoatsWithStatesAsync: Unexpected error occurred");
+            throw;
+        }
     }
 
     /// <inheritdoc/>
@@ -134,90 +163,151 @@ public class BoatRepository : IBoatRepository
     /// <inheritdoc/>
     public async Task UpdateBoatStateAsync(BoatState state)
     {
-        const string sql = @"
-            UPDATE boat_states
-            SET latitude = @latitude,
-                longitude = @longitude,
-                heading = @heading,
-                speed_knots = @speedKnots,
-                original_speed_knots = @originalSpeedKnots,
-                energy_level = @energyLevel,
-                status = @status,
-                speed = @speed,
-                conditions = @conditions,
-                area_covered = @areaCovered,
-                current_waypoint_index = @currentWaypointIndex,
-                last_updated = @lastUpdated
-            WHERE boat_id = @boatId";
-
-        await using var connection = await _dataSource.OpenConnectionAsync();
-        await using var command = connection.CreateCommand();
-        command.CommandText = sql;
-
-        command.Parameters.AddWithValue("@latitude", state.Latitude);
-        command.Parameters.AddWithValue("@longitude", state.Longitude);
-        command.Parameters.AddWithValue("@heading", state.Heading);
-        command.Parameters.AddWithValue("@speedKnots", state.SpeedKnots);
-        command.Parameters.AddWithValue("@originalSpeedKnots", state.OriginalSpeedKnots);
-        command.Parameters.AddWithValue("@energyLevel", state.EnergyLevel);
-        command.Parameters.AddWithValue("@status", state.Status);
-        command.Parameters.AddWithValue("@speed", state.Speed);
-        command.Parameters.AddWithValue("@conditions", state.Conditions);
-        command.Parameters.AddWithValue("@areaCovered", state.AreaCovered);
-        command.Parameters.AddWithValue("@currentWaypointIndex", state.CurrentWaypointIndex);
-        command.Parameters.AddWithValue("@lastUpdated", state.LastUpdated ?? DateTime.UtcNow);
-        command.Parameters.AddWithValue("@boatId", state.BoatId);
-
-        var rowsAffected = await command.ExecuteNonQueryAsync();
-
-        if (rowsAffected == 0)
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        _logger.LogDebug("UpdateBoatStateAsync: Starting update for {BoatId}, Status={Status}, EnergyLevel={EnergyLevel}", 
+            state.BoatId, state.Status, state.EnergyLevel);
+        
+        try
         {
-            _logger.LogWarning("Boat state update affected 0 rows for {BoatId}", state.BoatId);
+            const string sql = @"
+                UPDATE boat_states
+                SET latitude = @latitude,
+                    longitude = @longitude,
+                    heading = @heading,
+                    speed_knots = @speedKnots,
+                    original_speed_knots = @originalSpeedKnots,
+                    energy_level = @energyLevel,
+                    status = @status,
+                    speed = @speed,
+                    conditions = @conditions,
+                    area_covered = @areaCovered,
+                    current_waypoint_index = @currentWaypointIndex,
+                    last_updated = @lastUpdated
+                WHERE boat_id = @boatId";
+
+            await using var connection = await _dataSource.OpenConnectionAsync();
+            await using var command = connection.CreateCommand();
+            command.CommandText = sql;
+
+            command.Parameters.AddWithValue("@latitude", state.Latitude);
+            command.Parameters.AddWithValue("@longitude", state.Longitude);
+            command.Parameters.AddWithValue("@heading", state.Heading);
+            command.Parameters.AddWithValue("@speedKnots", state.SpeedKnots);
+            command.Parameters.AddWithValue("@originalSpeedKnots", state.OriginalSpeedKnots);
+            command.Parameters.AddWithValue("@energyLevel", state.EnergyLevel);
+            command.Parameters.AddWithValue("@status", state.Status);
+            command.Parameters.AddWithValue("@speed", state.Speed);
+            command.Parameters.AddWithValue("@conditions", state.Conditions);
+            command.Parameters.AddWithValue("@areaCovered", state.AreaCovered);
+            command.Parameters.AddWithValue("@currentWaypointIndex", state.CurrentWaypointIndex);
+            command.Parameters.AddWithValue("@lastUpdated", state.LastUpdated ?? DateTime.UtcNow);
+            command.Parameters.AddWithValue("@boatId", state.BoatId);
+
+            var rowsAffected = await command.ExecuteNonQueryAsync();
+
+            stopwatch.Stop();
+            var elapsedMs = stopwatch.ElapsedMilliseconds;
+
+            if (rowsAffected == 0)
+            {
+                _logger.LogWarning("UpdateBoatStateAsync: Update affected 0 rows for {BoatId} in {ElapsedMs}ms - boat may not exist", 
+                    state.BoatId, elapsedMs);
+            }
+            else if (elapsedMs > 100)
+            {
+                _logger.LogWarning("UpdateBoatStateAsync: Slow query detected - {ElapsedMs}ms (threshold: 100ms), updated {RowsAffected} rows for {BoatId}", 
+                    elapsedMs, rowsAffected, state.BoatId);
+            }
+            else
+            {
+                _logger.LogDebug("UpdateBoatStateAsync: Completed in {ElapsedMs}ms, updated {RowsAffected} rows for {BoatId}", 
+                    elapsedMs, rowsAffected, state.BoatId);
+            }
         }
-        else
+        catch (NpgsqlException ex)
         {
-            _logger.LogDebug("Updated boat state for {BoatId}", state.BoatId);
+            _logger.LogError(ex, "UpdateBoatStateAsync: Database error occurred for {BoatId} - {ErrorCode}", 
+                state.BoatId, ex.ErrorCode);
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "UpdateBoatStateAsync: Unexpected error occurred for {BoatId}", state.BoatId);
+            throw;
         }
     }
 
     /// <inheritdoc/>
     public async Task<IEnumerable<Models.Waypoint>> GetWaypointsForBoatAsync(string boatId)
     {
-        const string sql = @"
-            SELECT id, boat_id, latitude, longitude, sequence, created_at
-            FROM waypoints
-            WHERE boat_id = @boatId
-            ORDER BY sequence";
-
-        var waypoints = new List<Models.Waypoint>();
-
-        await using var connection = await _dataSource.OpenConnectionAsync();
-        await using var command = connection.CreateCommand();
-        command.CommandText = sql;
-        command.Parameters.AddWithValue("@boatId", boatId);
-
-        await using var reader = await command.ExecuteReaderAsync();
-        while (await reader.ReadAsync())
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        _logger.LogDebug("GetWaypointsForBoatAsync: Starting query for {BoatId}", boatId);
+        
+        try
         {
-            var waypoint = new Models.Waypoint(
-                Id: reader.GetInt32(0),
-                BoatId: reader.GetString(1),
-                Latitude: reader.GetDouble(2),
-                Longitude: reader.GetDouble(3),
-                Sequence: reader.GetInt32(4),
-                CreatedAt: reader.IsDBNull(5) ? null : reader.GetDateTime(5)
-            );
+            const string sql = @"
+                SELECT id, boat_id, latitude, longitude, sequence, created_at
+                FROM waypoints
+                WHERE boat_id = @boatId
+                ORDER BY sequence";
 
-            waypoints.Add(waypoint);
+            var waypoints = new List<Models.Waypoint>();
+
+            await using var connection = await _dataSource.OpenConnectionAsync();
+            await using var command = connection.CreateCommand();
+            command.CommandText = sql;
+            command.Parameters.AddWithValue("@boatId", boatId);
+
+            await using var reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                var waypoint = new Models.Waypoint(
+                    Id: reader.GetInt32(0),
+                    BoatId: reader.GetString(1),
+                    Latitude: reader.GetDouble(2),
+                    Longitude: reader.GetDouble(3),
+                    Sequence: reader.GetInt32(4),
+                    CreatedAt: reader.IsDBNull(5) ? null : reader.GetDateTime(5)
+                );
+
+                waypoints.Add(waypoint);
+            }
+
+            stopwatch.Stop();
+            var elapsedMs = stopwatch.ElapsedMilliseconds;
+
+            if (elapsedMs > 100)
+            {
+                _logger.LogWarning("GetWaypointsForBoatAsync: Slow query detected - {ElapsedMs}ms (threshold: 100ms), returned {Count} waypoints for {BoatId}", 
+                    elapsedMs, waypoints.Count, boatId);
+            }
+            else
+            {
+                _logger.LogDebug("GetWaypointsForBoatAsync: Completed in {ElapsedMs}ms, returned {Count} waypoints for {BoatId}", 
+                    elapsedMs, waypoints.Count, boatId);
+            }
+
+            return waypoints;
         }
-
-        _logger.LogDebug("Retrieved {Count} waypoints for boat {BoatId}", waypoints.Count, boatId);
-        return waypoints;
+        catch (NpgsqlException ex)
+        {
+            _logger.LogError(ex, "GetWaypointsForBoatAsync: Database error occurred for {BoatId} - {ErrorCode}", 
+                boatId, ex.ErrorCode);
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetWaypointsForBoatAsync: Unexpected error occurred for {BoatId}", boatId);
+            throw;
+        }
     }
 
     /// <inheritdoc/>
     public async Task<int> ResetAllBoatsAsync()
     {
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        _logger.LogDebug("ResetAllBoatsAsync: Starting boat state reset transaction");
+        
         // Initial state values from data-model.md sample data
         const string sql = @"
             UPDATE boat_states
@@ -281,12 +371,36 @@ public class BoatRepository : IBoatRepository
 
             await transaction.CommitAsync();
 
-            _logger.LogInformation("Reset {Count} boats to initial state", rowsAffected);
+            stopwatch.Stop();
+            var elapsedMs = stopwatch.ElapsedMilliseconds;
+
+            if (rowsAffected == 0)
+            {
+                _logger.LogWarning("ResetAllBoatsAsync: Reset affected 0 rows in {ElapsedMs}ms - no boat states updated", elapsedMs);
+            }
+            else if (elapsedMs > 100)
+            {
+                _logger.LogWarning("ResetAllBoatsAsync: Slow query detected - {ElapsedMs}ms (threshold: 100ms), reset {Count} boats", 
+                    elapsedMs, rowsAffected);
+            }
+            else
+            {
+                _logger.LogInformation("ResetAllBoatsAsync: Successfully reset {Count} boats to initial state in {ElapsedMs}ms", 
+                    rowsAffected, elapsedMs);
+            }
+            
             return rowsAffected;
+        }
+        catch (NpgsqlException ex)
+        {
+            _logger.LogError(ex, "ResetAllBoatsAsync: Database error occurred during reset, rolling back transaction - {ErrorCode}", 
+                ex.ErrorCode);
+            await transaction.RollbackAsync();
+            throw;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to reset boats, rolling back transaction");
+            _logger.LogError(ex, "ResetAllBoatsAsync: Unexpected error occurred during reset, rolling back transaction");
             await transaction.RollbackAsync();
             throw;
         }

@@ -219,10 +219,9 @@ Navigate to `http://localhost:5050`
 
 **Expected Tables**:
 
-- `boats` (4 rows)
-- `boat_states` (4 rows)
-- `routes` (4 rows)
-- `waypoints` (~20 rows)
+- `boats` (4 rows) - vessel metadata (id, vessel_name, survey_type, project, crew_count)
+- `boat_states` (4 rows) - real-time state (latitude, longitude, status, energy_level, heading)
+- `waypoints` (~20 rows) - navigation waypoints (boat_id, latitude, longitude, sequence_order)
 
 **Run Test Query**:
 

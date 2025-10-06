@@ -1,6 +1,88 @@
 @ApiService_HostAddress = http://localhost:5578
 
-GET {{ApiService_HostAddress}}/weatherforecast/
+# =============================================================================
+# EnergyBoatApp API - PostgreSQL Database Backend
+# =============================================================================
+# All endpoints now query PostgreSQL database with 4 production boats:
+#   - BOAT-001: Contoso Sea Voyager (geophysical survey, Dogger Bank)
+#   - BOAT-002: Contoso Sea Explorer (environmental monitoring, North Sea)
+#   - BOAT-003: Contoso Sea Surveyor (cable route survey, Irish Sea)
+#   - BOAT-004: Contoso Sea Monitor (renewable energy, German Bight)
+#
+# Database connection: PostgreSQL 16 container via Aspire orchestration
+# Connection string: User Secrets (aspire run handles automatically)
+# Admin access: pgAdmin at http://localhost:5050 (admin@contoso-sea.com / admin123)
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# GET /api/boats - Retrieve all boat states
+# -----------------------------------------------------------------------------
+# Returns array of BoatStatus with real-time position, energy, heading
+# Speed multiplier: 0.1 (slow-mo) to 10.0 (10x speed)
+# Response: 200 OK with JSON array of 4 boats
+# Performance: <200ms p95 latency (typically <10ms)
+
+### Get all boats (normal speed)
+GET {{ApiService_HostAddress}}/api/boats
+Accept: application/json
+
+### Get all boats (10x speed simulation)
+GET {{ApiService_HostAddress}}/api/boats?speed=10.0
+Accept: application/json
+
+### Get all boats (slow motion)
+GET {{ApiService_HostAddress}}/api/boats?speed=0.5
+Accept: application/json
+
+# -----------------------------------------------------------------------------
+# Expected Response (4 boats from PostgreSQL database)
+# -----------------------------------------------------------------------------
+# [
+#   {
+#     "id": "BOAT-001",
+#     "latitude": 51.51234,
+#     "longitude": -0.13456,
+#     "status": "Active",
+#     "energyLevel": 85.5,
+#     "vesselName": "Contoso Sea Voyager",
+#     "surveyType": "Geophysical Survey",
+#     "project": "Dogger Bank Offshore Wind Farm",
+#     "equipment": "Multibeam Sonar, Magnetometer",
+#     "areaCovered": 125.3,
+#     "speed": "10 knots",
+#     "crewCount": 12,
+#     "conditions": "Good sea state",
+#     "heading": 245.8
+#   },
+#   ... (3 more boats)
+# ]
+
+# -----------------------------------------------------------------------------
+# POST /api/boats/reset - Reset all boats to initial positions
+# -----------------------------------------------------------------------------
+# Resets all 4 boats to start of waypoint routes
+# Response: 200 OK with success message
+# Side effect: Database boat_states table updated for all boats
+
+### Reset all boats to initial positions
+POST {{ApiService_HostAddress}}/api/boats/reset
+Content-Type: application/json
+
+# -----------------------------------------------------------------------------
+# Expected Response
+# -----------------------------------------------------------------------------
+# {
+#   "message": "Boats reset to initial positions"
+# }
+
+# -----------------------------------------------------------------------------
+# /health - Health check endpoint
+# -----------------------------------------------------------------------------
+# Verifies PostgreSQL connection and schema
+# Response: 200 Healthy | 503 Unhealthy
+
+### Health check
+GET {{ApiService_HostAddress}}/health
 Accept: application/json
 
 ###

@@ -7,8 +7,24 @@ var builder = WebApplication.CreateBuilder(args);
 // Add service defaults & Aspire client integrations.
 builder.AddServiceDefaults();
 
-// Add PostgreSQL database connection
-builder.AddNpgsqlDataSource(connectionName: "ContosoSeaDB");
+// Add PostgreSQL database connection with resilience configuration
+builder.AddNpgsqlDataSource(
+    connectionName: "ContosoSeaDB",
+    configureDataSourceBuilder: dataSourceBuilder =>
+    {
+        // Configure connection pooling for high-load scenarios (supports 10x simulation speed)
+        // Default connection string will be enhanced with these parameters via the builder
+        dataSourceBuilder.ConnectionStringBuilder.MaxPoolSize = 100;
+        dataSourceBuilder.ConnectionStringBuilder.MinPoolSize = 10;
+        
+        // Configure timeouts for reliability
+        dataSourceBuilder.ConnectionStringBuilder.Timeout = 30;      // Connection timeout (seconds)
+        dataSourceBuilder.ConnectionStringBuilder.CommandTimeout = 60; // Command timeout (seconds)
+        
+        // Connection lifecycle settings
+        dataSourceBuilder.ConnectionStringBuilder.ConnectionIdleLifetime = 300; // Close idle connections after 5 minutes
+        dataSourceBuilder.ConnectionStringBuilder.ConnectionPruningInterval = 10; // Check for idle connections every 10 seconds
+    });
 
 // Add database initialization service (runs schema migration on startup)
 builder.Services.AddHostedService<DatabaseInitializationService>();
@@ -32,9 +48,6 @@ builder.Services.AddProblemDetails();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-
-// Add singleton for boat state simulation
-builder.Services.AddSingleton<BoatSimulator>();
 
 var app = builder.Build();
 
